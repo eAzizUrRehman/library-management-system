@@ -1,88 +1,154 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+
 using namespace std;
 
-class Books
+struct Book
 {
-
-    int ISBN = 1000;
+    int ISBN;
     string title;
     string author;
     string publisher;
+};
 
+class Books
+{
 public:
+    static int count;
+
     void addBook()
     {
-        // cout << "\n\tEnter ISBN : ";
-        // cin.ignore();
-        // cin >> ISBN;
+        count++;
 
-        ISBN++;
+        Book book;
+        book.ISBN = count;
 
         cout << "\tEnter title: ";
-        cin.ignore();
-        cin >> title;
+        cin >> book.title;
 
-        cout << "\tEnter Author: ";
-        cin.ignore();
-        cin >> author;
+        cout << "\tEnter author: ";
+        cin >> book.author;
 
-        cout << "\tEnter Publisher: ";
-        cin.ignore();
-        cin >> publisher;
+        cout << "\tEnter publisher: ";
+        cin >> book.publisher;
 
-        // TODO: check if data is properly inserted into File
-        // save to file
-        ofstream open("book.txt", ios::out | ios::binary | ios::app);
-        open.write((char *)(this), sizeof(Books));
-        open.close();
+        ofstream file;
+        file.open("./books/all-books-list.txt", ios::app);
+
+        file << book.ISBN << " " << book.title << " " << book.author << " " << book.publisher << endl;
+        file.close();
     }
 
-    void load_from_file()
+    void deleteBook()
     {
-    }
+        // TODO: if file gets opened but has no data at all
+        ifstream inFile;
+        ofstream outFile;
 
-    void remove_data_from_file()
-    {
-    }
-    void display()
-    {
-        // Loading data
-        ifstream fs;
-        fs.open("book1.txt", ios::in | ios::binary);
+        inFile.open("./books/all-books-list.txt");
+        outFile.open("./books/temp.txt");
 
-        if (!fs)
+        // if system fails to open the original file
+        if (!inFile)
         {
-            cerr << "Error opening file for reading" << endl;
+            cout << "\nNo books exit to delete." << endl;
             return;
         }
 
-        fs.read((char *)this, sizeof(Books));
-        fs.close();
+        if (!outFile)
+        {
+            cout << "\nSystem is getting internal error in deleting book. Try again later." << endl;
+            return;
+        }
 
-        // Printing on screen
-        cout << "\tISBN: " << ISBN << endl
-             << "\tTitle: " << title << endl
-             << "\tAUTHOE: " << author << endl
-             << "\tPUBLISHER: " << publisher << endl;
+        int ISBN;
+        cout << "\tEnter ISBN of the book to delete: ";
+        cin >> ISBN;
+
+        // if ISBN is below 1000
+        while (ISBN <= 1000)
+        {
+            cout << "\n\tWrong ISBN. Enter again: ";
+            cin >> ISBN;
+        }
+
+        Book book;
+
+        while (inFile >> book.ISBN >> book.title >> book.author >> book.publisher)
+        {
+            if (book.ISBN != ISBN)
+                outFile << book.ISBN << " " << book.title << " " << book.author << " " << book.publisher << endl;
+        }
+
+        inFile.close();
+        outFile.close();
+
+        remove("./books/all-books-list.txt");
+        rename("./books/temp.txt", "./books/all-books-list.txt");
+
+        cout << "\nBook with ISBN - " << ISBN << " deleted successfully!!" << endl;
+    }
+
+    void deleteAllBooks()
+    {
+        ifstream file("./books/all-books-list.txt");
+
+        // TODO: if file exists but has no data
+        if (!file)
+        {
+            cout << "\nNo books exist in the system." << endl;
+            return;
+        }
+
+        file.close();
+        remove("./books/all-books-list.txt");
+
+        cout << "\nAll books deleted successfully!!" << endl;
+    }
+
+    void displayAllBooks()
+    {
+        ifstream file;
+        file.open("./books/all-books-list.txt");
+
+        Book book;
+
+        cout << "\nAll Books: " << endl;
+        cout << "\n\tISBN\t\tTitle\t\tAuthor\t\tPublisher" << endl;
+
+        while (file >> book.ISBN >> book.title >> book.author >> book.publisher)
+        {
+            cout << "\t" << book.ISBN << "\t\t" << book.title << "\t\t" << book.author << "\t\t" << book.publisher << endl;
+        }
+
+        file.close();
     }
 };
+
+int Books::count = 1000;
 
 int main()
 {
     cout << "\n** Welcome to the Library Management System **" << endl;
 
-    Books list;
+    Books books;
     int choice;
 
     // TODO: if user select multiple, and want to enter 1 books
     do
     {
         cout << "\nMenu: " << endl
-             << "\t1.\tAdd a single book" << endl
-             << "\t2.\tAdd multiple books" << endl
-             << "\t3.\tDisplay all books" << endl
+             << "\t1.\tAdd a Student" << endl
+             << "\t2.\tRemove a Student" << endl
+             << "\t3.\tDisplay all Students" << endl
+             << "\t4.\tAdd a book" << endl
+             << "\t5.\tDelete a book" << endl
+             << "\t6.\tDelete all books" << endl
+             << "\t7.\tDisplay all books" << endl
+             << "\t8.\tAllot a Book" << endl
+             << "\t9.\tReturn a Book" << endl
+             << "\t10.\tCheck alloted books to a student" << endl
              << "\t99.\tExit" << endl
              << "\nEnter your choice: ";
 
@@ -90,11 +156,17 @@ int main()
 
         switch (choice)
         {
-        1 case 1:
-            list.addBook();
+        case 4:
+            books.addBook();
             break;
-        case 2:
-            list.display();
+        case 5:
+            books.deleteBook();
+            break;
+        case 6:
+            books.deleteAllBooks();
+            break;
+        case 7:
+            books.displayAllBooks();
             break;
         case 99:
             cout << "\n** Thanks for using the Library Management System **" << endl;
