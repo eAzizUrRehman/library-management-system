@@ -28,10 +28,10 @@ public:
         cout << "\tEnter name: ";
         cin >> student.name;
 
-        cout << "\tEnter fatherName: ";
+        cout << "\tEnter father name: ";
         cin >> student.fatherName;
 
-        cout << "\tEnter contactNo: ";
+        cout << "\tEnter contact number: ";
         cin >> student.contactNo;
 
         ofstream file;
@@ -64,13 +64,13 @@ public:
         }
 
         int ARID_No;
-        cout << "\tEnter ARID_No of the student to delete: ";
+        cout << "\tEnter ARID No of the student to delete: ";
         cin >> ARID_No;
 
         // if ARID_No is below 1000
         while (ARID_No <= 1000)
         {
-            cout << "\n\tWrong ARID_No. Enter again: ";
+            cout << "\n\tWrong ARID No.\nEnter again: ";
             cin >> ARID_No;
         }
 
@@ -88,7 +88,7 @@ public:
         remove("./students/all-students-list.txt");
         rename("./students/temp.txt", "./students/all-students-list.txt");
 
-        cout << "\nStudent with ARID_No - " << ARID_No << " deleted successfully!!" << endl;
+        cout << "\nStudent with ARID No - " << ARID_No << " deleted successfully!!" << endl;
     }
 
     void deleteAllStudents()
@@ -122,7 +122,7 @@ public:
         Student student;
 
         cout << "\nAll students: " << endl;
-        cout << "\n\tARID_No\t\tname\t\tfatherName\t\tcontactNo" << endl;
+        cout << "\n\tARID No\t\tName\t\tFather Name\t\tContact No" << endl;
 
         while (file >> student.ARID_No >> student.name >> student.fatherName >> student.contactNo)
         {
